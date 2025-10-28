@@ -1,0 +1,10 @@
+@import "node_modules/ol/ol.css";
+@import "node_modules/ol-ext/dist/ol-ext.css";
+#map {
+  height: 800px;
+  width: 800px;
+}
+#map .ol-mouse-position {
+  bottom: 8px;
+  top: auto;
+}
