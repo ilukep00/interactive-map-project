@@ -1,0 +1,19 @@
+{
+  "name": "project-ol",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^7.0.6"
+  },
+  "peerDependencies": {
+    "ol": "latest",
+    "ol-ext": "latest"
+  },
+  "dependencies": {
+    "jquery": "^3.7.1"
+  }
+}
