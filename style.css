@@ -1,5 +1,9 @@
 @import "node_modules/ol/ol.css";
 @import "node_modules/ol-ext/dist/ol-ext.css";
+
+body {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
 #map {
   height: 800px;
   width: 800px;
@@ -7,4 +11,11 @@
 #map .ol-mouse-position {
   bottom: 8px;
   top: auto;
+}
+
+.building_input {
+  border: 0.1rem solid #8c9da2;
+  border-radius: 0.5rem;
+  height: 1.5rem;
+  margin: 0.3rem 0 1rem;
 }
