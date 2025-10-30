@@ -18,6 +18,7 @@ import WKT from "ol/format/WKT.js";
 import LayerSwitcher from "ol-ext/control/LayerSwitcher";
 import Bar from "ol-ext/control/Bar";
 import Toggle from "ol-ext/control/Toggle";
+import Dialog from "ol-ext/control/Dialog";
 
 import "./style.css";
 
@@ -137,6 +138,14 @@ const polygonToggleButton = new Toggle({
 });
 drawingBar.addControl(polygonToggleButton);
 
+const buildingFormDialog = new Dialog({
+  title: "Register Building",
+  content:
+    'Building Code: <br/> <input type="text" class="building_code building_input"> <br/> Observation: <br/> <input type="text" class="observation building_input">',
+  buttons: { submit: "Accept", cancel: "Cancel" },
+});
+map.addControl(buildingFormDialog);
+
 function getDrawDone(event) {
   console.log(event);
   const wktFormat = new WKT({});
@@ -144,6 +153,7 @@ function getDrawDone(event) {
     dataProjection: "EPSG:4326",
     featureProjection: "EPSG:2857",
   });
+  buildingFormDialog.show();
   console.log(data);
 }
 
