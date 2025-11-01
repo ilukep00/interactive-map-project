@@ -147,6 +147,18 @@ const buildingFormDialog = new Dialog({
 });
 map.addControl(buildingFormDialog);
 
+buildingFormDialog.on("button", function (event) {
+  if (event?.button === "submit") {
+    const building_code = event.inputs["building_code"]?.value;
+    const observation = event.inputs["observation"]?.value;
+
+    console.log("Building code: ", building_code);
+    console.log("Observation: ", observation);
+
+    // CALL TO THE API HERE
+  }
+});
+
 function getDrawDone(event) {
   console.log(event);
   const wktFormat = new WKT({});
