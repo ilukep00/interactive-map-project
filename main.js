@@ -140,6 +140,7 @@ drawingBar.addControl(polygonToggleButton);
 
 const buildingFormDialog = new Dialog({
   title: "Register Building",
+  className: "registerBuilding",
   content:
     'Building Code: <br/> <input type="text" class="building_code building_input"> <br/> Observation: <br/> <input type="text" class="observation building_input">',
   buttons: { submit: "Accept", cancel: "Cancel" },
