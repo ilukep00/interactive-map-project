@@ -14,13 +14,27 @@ import VectorLayer from "ol/layer/Vector.js";
 import VectorSource from "ol/source/Vector.js";
 import Draw from "ol/interaction/Draw.js";
 import WKT from "ol/format/WKT.js";
+import TileWMS from "ol/source/TileWMS.js";
 
 import LayerSwitcher from "ol-ext/control/LayerSwitcher";
 import Bar from "ol-ext/control/Bar";
 import Toggle from "ol-ext/control/Toggle";
 import Dialog from "ol-ext/control/Dialog";
 
+import api_request from "./js_utilities/api_request";
+
 import "./style.css";
+
+const buildings_layers = new TileLayer({
+  source: new TileWMS({
+    url: "http://localhost:8080/geoserver/wms",
+    params: {
+      VERSION: "1.1.1",
+      LAYERS: "project_ol:buildings",
+    },
+  }),
+  title: "Buildings",
+});
 
 const baseLayers = new LayerGroup({
   title: "Base Layers",
@@ -53,7 +67,7 @@ const baseLayers = new LayerGroup({
 
 const map = new Map({
   target: "map",
-  layers: [baseLayers],
+  layers: [baseLayers, buildings_layers],
   view: new View({
     center: fromLonLat([-1.6389912, 42.8171412]),
     zoom: 17,
@@ -102,6 +116,7 @@ mainBar.addControl(drawingBar);
 // CREATING VECTOR LAYER FOR THE DRAWINGS
 const vectorDrawingLayer = new VectorLayer({
   source: new VectorSource({}),
+  displayInLayerSwitcher: false,
 });
 map.addLayer(vectorDrawingLayer);
 
@@ -147,29 +162,60 @@ const buildingFormDialog = new Dialog({
 });
 map.addControl(buildingFormDialog);
 
-buildingFormDialog.on("button", function (event) {
+const informativeDialog = new Dialog({ hideOnClick: true });
+map.addControl(informativeDialog);
+
+let wkt_data;
+buildingFormDialog.on("button", async function (event) {
   if (event?.button === "submit") {
     const building_code = event.inputs["building_code"]?.value;
     const observation = event.inputs["observation"]?.value;
 
-    console.log("Building code: ", building_code);
-    console.log("Observation: ", observation);
+    let successresponse = true;
+    try {
+      await api_request(wkt_data, building_code, observation);
+    } catch (error) {
+      successresponse = false;
+    }
 
-    // CALL TO THE API HERE
+    if (successresponse) {
+      buildings_layers.getSource().refresh();
+      const params = buildings_layers.getSource().getParams();
+      params.creationDate = new Date();
+      buildings_layers.getSource().updateParams(params);
+    }
+    informativeDialog.show(
+      successresponse
+        ? "The building has been registered correctly"
+        : "Some error when registering the building"
+    );
+  }
+
+  if (event?.button) {
+    vectorDrawingLayer.getSource().clear();
+    event.inputs["building_code"].value = "";
+    event.inputs["observation"].value = "";
   }
 });
 
-function getDrawDone(event) {
+function getDrawDone(event, type) {
   console.log(event);
   const wktFormat = new WKT({});
-  const data = wktFormat.writeFeature(event.feature, {
+  wkt_data = wktFormat.writeFeature(event.feature, {
     dataProjection: "EPSG:4326",
-    featureProjection: "EPSG:2857",
+    featureProjection: "EPSG:3857",
   });
-  buildingFormDialog.show();
-  console.log(data);
+  if (type === "Polygon") {
+    buildingFormDialog.show();
+  }
 }
 
-pointToggleButton.getInteraction().on("drawend", getDrawDone);
-lineToggleButton.getInteraction().on("drawend", getDrawDone);
-polygonToggleButton.getInteraction().on("drawend", getDrawDone);
+pointToggleButton.getInteraction().on("drawend", function (event) {
+  getDrawDone(event, "Point");
+});
+lineToggleButton.getInteraction().on("drawend", function (event) {
+  getDrawDone(event, "LineString");
+});
+polygonToggleButton.getInteraction().on("drawend", function (event) {
+  getDrawDone(event, "Polygon");
+});
