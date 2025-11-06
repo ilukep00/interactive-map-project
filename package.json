@@ -12,8 +12,5 @@
   "peerDependencies": {
     "ol": "latest",
     "ol-ext": "latest"
-  },
-  "dependencies": {
-    "jquery": "^3.7.1"
   }
 }
