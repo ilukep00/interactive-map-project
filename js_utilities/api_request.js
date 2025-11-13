@@ -1,11 +1,9 @@
-const API_REQUEST_URL = "http://127.0.0.1:8000/registerBuilding/";
+const API_OBJECTS_URL = {
+  Street: "http://127.0.0.1:8000/registerStreet/",
+  Building: "http://127.0.0.1:8000/registerBuilding/",
+};
 
-async function api_request(wkt_geometry, building_code, observation) {
-  const params = {
-    p_wkt: wkt_geometry,
-    p_building_cod: building_code,
-    p_observation: observation,
-  };
+async function doApiCall(params, url) {
   const options = {
     method: "POST",
     headers: {
@@ -13,7 +11,7 @@ async function api_request(wkt_geometry, building_code, observation) {
     },
     body: JSON.stringify(params),
   };
-  const response = await fetch(API_REQUEST_URL, options).then((response) => {
+  const response = await fetch(url, options).then((response) => {
     if (!response.ok) {
       throw new Error(`HTTP error: ${response.status}`);
     }
@@ -23,4 +21,29 @@ async function api_request(wkt_geometry, building_code, observation) {
   return response;
 }
 
-export default api_request;
+async function manageObjectPersistence(
+  objectType,
+  params,
+  layerToAddObject,
+  informativeDialog
+) {
+  let successresponse = true;
+  try {
+    await doApiCall(params, API_OBJECTS_URL[objectType]);
+  } catch (error) {
+    successresponse = false;
+  }
+
+  if (successresponse) {
+    const params = layerToAddObject.getSource().getParams();
+    params.creationDate = new Date();
+    layerToAddObject.getSource().updateParams(params);
+  }
+  informativeDialog.show(
+    successresponse
+      ? "The " + objectType + " has been registered correctly"
+      : "Some error when registering the " + objectType
+  );
+}
+
+export { manageObjectPersistence };

@@ -13,13 +13,13 @@ body {
   top: auto;
 }
 
-.building_input {
+.form_input {
   border: 0.1rem solid #8c9da2;
   border-radius: 0.5rem;
   height: 1.5rem;
   margin: 0.3rem 0 1rem;
 }
 
-.registerBuilding .ol-title h2 {
+.registerForm .ol-title h2 {
   color: rgba(0, 60, 136, 1);
 }

@@ -21,9 +21,11 @@ import Bar from "ol-ext/control/Bar";
 import Toggle from "ol-ext/control/Toggle";
 import Dialog from "ol-ext/control/Dialog";
 
-import api_request from "./js_utilities/api_request";
+import { manageObjectPersistence } from "./js_utilities/api_request";
 
 import "./style.css";
+
+let wkt_data;
 
 const buildings_layers = new TileLayer({
   source: new TileWMS({
@@ -31,6 +33,17 @@ const buildings_layers = new TileLayer({
     params: {
       VERSION: "1.1.1",
       LAYERS: "project_ol:buildings",
+    },
+  }),
+  title: "Buildings",
+});
+
+const streets_layers = new TileLayer({
+  source: new TileWMS({
+    url: "http://localhost:8080/geoserver/wms",
+    params: {
+      VERSION: "1.1.1",
+      LAYERS: "project_ol:streets",
     },
   }),
   title: "Buildings",
@@ -67,7 +80,7 @@ const baseLayers = new LayerGroup({
 
 const map = new Map({
   target: "map",
-  layers: [baseLayers, buildings_layers],
+  layers: [baseLayers, buildings_layers, streets_layers],
   view: new View({
     center: fromLonLat([-1.6389912, 42.8171412]),
     zoom: 17,
@@ -120,6 +133,9 @@ const vectorDrawingLayer = new VectorLayer({
 });
 map.addLayer(vectorDrawingLayer);
 
+const informativeDialog = new Dialog({ hideOnClick: true });
+map.addControl(informativeDialog);
+
 // ADDING TOGGLE BUTTON CONTROL FOR DRAW A POINT TO DRAWINGBAR
 const pointToggleButton = new Toggle({
   title: "Draw a Point",
@@ -142,6 +158,36 @@ const lineToggleButton = new Toggle({
 });
 drawingBar.addControl(lineToggleButton);
 
+const streetFormDialog = new Dialog({
+  title: "Register Street",
+  className: "registerForm",
+  content:
+    'Street Name: <br/> <input type="text" class="street_name form_input"> <br/>',
+  buttons: { submit: "Accept", cancel: "Cancel" },
+});
+map.addControl(streetFormDialog);
+
+streetFormDialog.on("button", async function (event) {
+  if (event?.button === "submit") {
+    const street_name = event.inputs["street_name"]?.value;
+    const params = {
+      p_wkt: wkt_data,
+      p_name: street_name,
+    };
+    await manageObjectPersistence(
+      "Street",
+      params,
+      streets_layers,
+      informativeDialog
+    );
+  }
+
+  if (event?.button) {
+    vectorDrawingLayer.getSource().clear();
+    event.inputs["street_name"].value = "";
+  }
+});
+
 // ADDING TOGGLE BUTTON CONTROL FOR DRAW A POLYGON TO DRAWINGBAR
 const polygonToggleButton = new Toggle({
   title: "Draw a Polygon",
@@ -155,39 +201,28 @@ drawingBar.addControl(polygonToggleButton);
 
 const buildingFormDialog = new Dialog({
   title: "Register Building",
-  className: "registerBuilding",
+  className: "registerForm",
   content:
-    'Building Code: <br/> <input type="text" class="building_code building_input"> <br/> Observation: <br/> <input type="text" class="observation building_input">',
+    'Building Code: <br/> <input type="text" class="building_code form_input"> <br/> Observation: <br/> <input type="text" class="observation form_input">',
   buttons: { submit: "Accept", cancel: "Cancel" },
 });
 map.addControl(buildingFormDialog);
 
-const informativeDialog = new Dialog({ hideOnClick: true });
-map.addControl(informativeDialog);
-
-let wkt_data;
 buildingFormDialog.on("button", async function (event) {
   if (event?.button === "submit") {
     const building_code = event.inputs["building_code"]?.value;
     const observation = event.inputs["observation"]?.value;
 
-    let successresponse = true;
-    try {
-      await api_request(wkt_data, building_code, observation);
-    } catch (error) {
-      successresponse = false;
-    }
-
-    if (successresponse) {
-      buildings_layers.getSource().refresh();
-      const params = buildings_layers.getSource().getParams();
-      params.creationDate = new Date();
-      buildings_layers.getSource().updateParams(params);
-    }
-    informativeDialog.show(
-      successresponse
-        ? "The building has been registered correctly"
-        : "Some error when registering the building"
+    const params = {
+      p_wkt: wkt_data,
+      p_building_cod: building_code,
+      p_observation: observation,
+    };
+    await manageObjectPersistence(
+      "Building",
+      params,
+      buildings_layers,
+      informativeDialog
     );
   }
 
@@ -207,6 +242,8 @@ function getDrawDone(event, type) {
   });
   if (type === "Polygon") {
     buildingFormDialog.show();
+  } else if (type === "LineString") {
+    streetFormDialog.show();
   }
 }
 

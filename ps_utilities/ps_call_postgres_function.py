@@ -8,7 +8,7 @@ DB_CONFIG = {
     "port": int(os.getenv("DB_PORT", 5432))
 }
 
-def fn_building_register_call(p_wkt,p_building_cod,p_observation):
+def call_postgres_function(functionName, *args):
     parts = []
     # read database configuration
     params = DB_CONFIG
@@ -19,7 +19,7 @@ def fn_building_register_call(p_wkt,p_building_cod,p_observation):
             with conn.cursor() as cur:
                 # create a cursor object for execution
                 cur = conn.cursor()
-                cur.callproc('fn_building_register', (p_wkt,p_building_cod,p_observation))
+                cur.callproc(functionName, args)
                 # process the result set
                 row = cur.fetchone()
                 while row is not None:
@@ -29,5 +29,3 @@ def fn_building_register_call(p_wkt,p_building_cod,p_observation):
         print(error)
     finally:
         return parts
-
-

@@ -1,11 +1,16 @@
+-- FUNCTION: public.fn_building_register(character varying, character varying, character varying)
+
+-- DROP FUNCTION IF EXISTS public.fn_building_register(character varying, character varying, character varying);
+
 CREATE OR REPLACE FUNCTION public.fn_building_register(
 	p_wkt character varying,
 	p_building_cod character varying,
-	p_observation character varying
-)
-RETURNS SETOF bigint
-LANGUAGE 'plpgsql'
-VOLATILE PARALLEL UNSAFE
+	p_observation character varying)
+    RETURNS SETOF bigint 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
 
 AS $BODY$
 BEGIN
@@ -17,3 +22,6 @@ BEGIN
 	SELECT currval('lands_land_id_seq');
 END;
 $BODY$;
+
+ALTER FUNCTION public.fn_building_register(character varying, character varying, character varying)
+    OWNER TO postgres;

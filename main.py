@@ -2,13 +2,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
-from ps_utilities.ps_fn_building_register_call import fn_building_register_call
+from ps_utilities.ps_call_postgres_function import call_postgres_function
 
-
-class Item(BaseModel):
+class Building(BaseModel):
     p_wkt: str
     p_building_cod: str
     p_observation: str
+
+class Street(BaseModel):
+    p_wkt: str
+    p_name: str
 
 app = FastAPI()
 
@@ -20,18 +23,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-@app.get("/")
-def root():
-    return {"message": "Hello World"}
-
-@app.get("/items/{item_id}")
-async def read_item(item_id):
-    return {"item_id": item_id}
-
 @app.post("/registerBuilding/")
-async def register_building(item: Item):
-    return fn_building_register_call(item.p_wkt, item.p_building_cod, item.p_observation)
+async def register_building(item: Building):
+    return call_postgres_function('fn_building_register',item.p_wkt, item.p_building_cod, item.p_observation)
+
+@app.post("/registerStreet/")
+async def register_street(item: Street):
+    return call_postgres_function('fn_street_register',item.p_wkt, item.p_name)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
