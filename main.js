@@ -20,12 +20,17 @@ import LayerSwitcher from "ol-ext/control/LayerSwitcher";
 import Bar from "ol-ext/control/Bar";
 import Toggle from "ol-ext/control/Toggle";
 import Dialog from "ol-ext/control/Dialog";
+import Popup from "ol-ext/overlay/Popup";
 
-import { manageObjectPersistence } from "./js_utilities/api_request";
+import {
+  manageObjectPersistence,
+  requestService,
+} from "./js_utilities/serviceUtils";
 
 import "./style.css";
 
 let wkt_data;
+let isInInfoMode = false;
 
 const buildings_layers = new TileLayer({
   source: new TileWMS({
@@ -33,6 +38,7 @@ const buildings_layers = new TileLayer({
     params: {
       VERSION: "1.1.1",
       LAYERS: "project_ol:buildings",
+      STYLES: "style_buildings",
     },
   }),
   title: "Buildings",
@@ -44,6 +50,7 @@ const streets_layers = new TileLayer({
     params: {
       VERSION: "1.1.1",
       LAYERS: "project_ol:streets",
+      STYLES: "style_streets",
     },
   }),
   title: "Buildings",
@@ -86,6 +93,57 @@ const map = new Map({
     zoom: 17,
   }),
 });
+
+const featureInformationPopup = new Popup({
+  closeBox: true,
+});
+map.addOverlay(featureInformationPopup);
+
+map.on("singleclick", async function (event) {
+  if (isInInfoMode) {
+    const coordinate = event.coordinate;
+    const resolution = map.getView().getResolution();
+    const projection = map.getView().getProjection();
+    const params = { INFO_FORMAT: "application/json", FEATURE_COUNT: 50 };
+
+    const layers = [buildings_layers, streets_layers];
+    let featurePropertiesInfo = "";
+    for (const layer of layers) {
+      const featureInfoUrl = layer
+        .getSource()
+        .getFeatureInfoUrl(coordinate, resolution, projection, params);
+
+      const response = await requestService(featureInfoUrl);
+
+      if (response.features.length > 0) {
+        featurePropertiesInfo += "<div><b>Results : </b></div>";
+        featurePropertiesInfo += response.features.reduce(
+          (featureInfo, feature) => {
+            let propertiesInfo = "";
+            for (let property in feature.properties) {
+              propertiesInfo +=
+                "<div><b>" +
+                property +
+                " : </b>" +
+                response.features[0].properties[property] +
+                "</div>";
+            }
+            featureInfo += propertiesInfo + "<br>";
+            return featureInfo;
+          },
+          ""
+        );
+      }
+    }
+    featureInformationPopup.show(
+      coordinate,
+      featurePropertiesInfo !== ""
+        ? featurePropertiesInfo
+        : "<div>No results found</div>"
+    );
+  }
+});
+
 //ADDING BASE LAYER SWITCHER CONTROL TO MAP
 const baseLayerSwitcher = new LayerSwitcher({});
 map.addControl(baseLayerSwitcher);
@@ -256,3 +314,15 @@ lineToggleButton.getInteraction().on("drawend", function (event) {
 polygonToggleButton.getInteraction().on("drawend", function (event) {
   getDrawDone(event, "Polygon");
 });
+
+const infoBar = new Bar({ group: true, toggleOne: true });
+mainBar.addControl(infoBar);
+
+const infomativeToggleButton = new Toggle({
+  title: "Information",
+  html: '<i class="fa-solid fa-info"></i>',
+  onToggle: function (checked) {
+    isInInfoMode = checked;
+  },
+});
+infoBar.addControl(infomativeToggleButton);

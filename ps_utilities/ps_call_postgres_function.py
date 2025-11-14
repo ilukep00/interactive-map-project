@@ -4,7 +4,7 @@ DB_CONFIG = {
     "host": os.getenv("DB_HOST", "localhost"),
     "dbname": os.getenv("DB_NAME", "your_db"),
     "user": os.getenv("DB_USER", "your_user"),
-    "password": os.getenv("DB_PASSWORD", "yout_password"),
+    "password": os.getenv("DB_PASSWORD", "your_password"),
     "port": int(os.getenv("DB_PORT", 5432))
 }
 

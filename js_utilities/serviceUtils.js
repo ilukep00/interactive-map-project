@@ -3,14 +3,7 @@ const API_OBJECTS_URL = {
   Building: "http://127.0.0.1:8000/registerBuilding/",
 };
 
-async function doApiCall(params, url) {
-  const options = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(params),
-  };
+async function requestService(url, options = {}) {
   const response = await fetch(url, options).then((response) => {
     if (!response.ok) {
       throw new Error(`HTTP error: ${response.status}`);
@@ -29,7 +22,14 @@ async function manageObjectPersistence(
 ) {
   let successresponse = true;
   try {
-    await doApiCall(params, API_OBJECTS_URL[objectType]);
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(params),
+    };
+    await requestService(API_OBJECTS_URL[objectType], options);
   } catch (error) {
     successresponse = false;
   }
@@ -46,4 +46,4 @@ async function manageObjectPersistence(
   );
 }
 
-export { manageObjectPersistence };
+export { manageObjectPersistence, requestService };
