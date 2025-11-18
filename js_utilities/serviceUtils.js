@@ -2,6 +2,7 @@ const API_OBJECTS_URL = {
   Street: "http://127.0.0.1:8000/registerStreet/",
   Building: "http://127.0.0.1:8000/registerBuilding/",
   BuildingApprove: "http://127.0.0.1:8000/buildingApprove/",
+  Point: "http://127.0.0.1:8000/registerPoint/",
 };
 
 const MESSAGES = {
@@ -16,6 +17,10 @@ const MESSAGES = {
   BuildingApprove: {
     success: "The Building has been approved correctly",
     error: "Some error when approving the Building",
+  },
+  Point: {
+    success: "The Point has been registered correctly",
+    error: "Some error when registering the Point",
   },
 };
 
@@ -45,7 +50,10 @@ async function manageObjectPersistence(
       },
       body: JSON.stringify(params),
     };
-    await requestService(API_OBJECTS_URL[objectType], options);
+    const response = await requestService(API_OBJECTS_URL[objectType], options);
+    if (response.length === 0) {
+      successresponse = false;
+    }
   } catch (error) {
     successresponse = false;
   }

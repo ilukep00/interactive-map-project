@@ -9,7 +9,7 @@ class Building(BaseModel):
     p_building_cod: str
     p_observation: str
 
-class Street(BaseModel):
+class BaseObject(BaseModel):
     p_wkt: str
     p_name: str
 
@@ -31,12 +31,16 @@ async def register_building(item: Building):
     return call_postgres_function('fn_building_register',item.p_wkt, item.p_building_cod, item.p_observation)
 
 @app.post("/registerStreet/")
-async def register_street(item: Street):
+async def register_street(item: BaseObject):
     return call_postgres_function('fn_street_register',item.p_wkt, item.p_name)
 
 @app.post("/buildingApprove/")
 async def register_street(item: BuildingApprove):
     return call_postgres_function('fn_building_approve',item.p_building_id)
+
+@app.post("/registerPoint/")
+async def register_street(item: BaseObject):
+    return call_postgres_function('fn_point_register',item.p_wkt, item.p_name)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

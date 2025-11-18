@@ -56,6 +56,17 @@ const streets_layers = new TileLayer({
   title: "Buildings",
 });
 
+const points_layers = new TileLayer({
+  source: new TileWMS({
+    url: "http://localhost:8080/geoserver/wms",
+    params: {
+      VERSION: "1.1.1",
+      LAYERS: "project_ol:points",
+    },
+  }),
+  title: "Points",
+});
+
 const baseLayers = new LayerGroup({
   title: "Base Layers",
   openInLayerSwitcher: true,
@@ -87,7 +98,7 @@ const baseLayers = new LayerGroup({
 
 const map = new Map({
   target: "map",
-  layers: [baseLayers, buildings_layers, streets_layers],
+  layers: [baseLayers, buildings_layers, streets_layers, points_layers],
   view: new View({
     center: fromLonLat([-1.6389912, 42.8171412]),
     zoom: 17,
@@ -109,7 +120,7 @@ map.on("singleclick", async function (event) {
     const projection = map.getView().getProjection();
     const params = { INFO_FORMAT: "application/json", FEATURE_COUNT: 50 };
 
-    const layers = [buildings_layers, streets_layers];
+    const layers = [buildings_layers, streets_layers, points_layers];
     let featurePropertiesInfo = "";
     for (const layer of layers) {
       const featureInfoUrl = layer
@@ -227,6 +238,36 @@ const pointToggleButton = new Toggle({
 });
 drawingBar.addControl(pointToggleButton);
 
+const pointFormDialog = new Dialog({
+  title: "Register Point",
+  className: "registerPoint",
+  content:
+    'Point Name: <br/> <input type="text" class="point_name form_input"> <br/>',
+  buttons: { submit: "Accept", cancel: "Cancel" },
+});
+map.addControl(pointFormDialog);
+
+pointFormDialog.on("button", async function (event) {
+  if (event?.button === "submit") {
+    const point_name = event.inputs["point_name"]?.value;
+    const params = {
+      p_wkt: wkt_data,
+      p_name: point_name,
+    };
+    await manageObjectPersistence(
+      "Point",
+      params,
+      points_layers,
+      informativeDialog
+    );
+  }
+
+  if (event?.button) {
+    vectorDrawingLayer.getSource().clear();
+    event.inputs["point_name"].value = "";
+  }
+});
+
 // ADDING TOGGLE BUTTON CONTROL FOR DRAW A LINESTRING TO DRAWINGBAR
 const lineToggleButton = new Toggle({
   title: "Draw a Line",
@@ -324,6 +365,8 @@ function getDrawDone(event, type) {
     buildingFormDialog.show();
   } else if (type === "LineString") {
     streetFormDialog.show();
+  } else {
+    pointFormDialog.show();
   }
 }
 
