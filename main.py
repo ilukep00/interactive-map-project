@@ -13,6 +13,9 @@ class Street(BaseModel):
     p_wkt: str
     p_name: str
 
+class BuildingApprove(BaseModel):
+    p_building_id: int
+
 app = FastAPI()
 
 app.add_middleware(
@@ -30,6 +33,10 @@ async def register_building(item: Building):
 @app.post("/registerStreet/")
 async def register_street(item: Street):
     return call_postgres_function('fn_street_register',item.p_wkt, item.p_name)
+
+@app.post("/buildingApprove/")
+async def register_street(item: BuildingApprove):
+    return call_postgres_function('fn_building_approve',item.p_building_id)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

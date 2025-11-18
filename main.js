@@ -30,7 +30,7 @@ import {
 import "./style.css";
 
 let wkt_data;
-let isInInfoMode = false;
+let mode = "";
 
 const buildings_layers = new TileLayer({
   source: new TileWMS({
@@ -99,8 +99,11 @@ const featureInformationPopup = new Popup({
 });
 map.addOverlay(featureInformationPopup);
 
+const informativeDialog = new Dialog({ hideOnClick: true });
+map.addControl(informativeDialog);
+
 map.on("singleclick", async function (event) {
-  if (isInInfoMode) {
+  if (mode === "info") {
     const coordinate = event.coordinate;
     const resolution = map.getView().getResolution();
     const projection = map.getView().getProjection();
@@ -141,6 +144,28 @@ map.on("singleclick", async function (event) {
         ? featurePropertiesInfo
         : "<div>No results found</div>"
     );
+  } else if (mode === "approve") {
+    const coordinate = event.coordinate;
+    const resolution = map.getView().getResolution();
+    const projection = map.getView().getProjection();
+    const params = { INFO_FORMAT: "application/json", FEATURE_COUNT: 1 };
+    const featureInfoUrl = buildings_layers
+      .getSource()
+      .getFeatureInfoUrl(coordinate, resolution, projection, params);
+    const response = await requestService(featureInfoUrl);
+    if (response.features.length === 1) {
+      const feature = response.features[0];
+      const featureId = feature.id.split(".")[1];
+      const params = {
+        p_building_id: featureId,
+      };
+      await manageObjectPersistence(
+        "BuildingApprove",
+        params,
+        buildings_layers,
+        informativeDialog
+      );
+    }
   }
 });
 
@@ -190,9 +215,6 @@ const vectorDrawingLayer = new VectorLayer({
   displayInLayerSwitcher: false,
 });
 map.addLayer(vectorDrawingLayer);
-
-const informativeDialog = new Dialog({ hideOnClick: true });
-map.addControl(informativeDialog);
 
 // ADDING TOGGLE BUTTON CONTROL FOR DRAW A POINT TO DRAWINGBAR
 const pointToggleButton = new Toggle({
@@ -322,7 +344,16 @@ const infomativeToggleButton = new Toggle({
   title: "Information",
   html: '<i class="fa-solid fa-info"></i>',
   onToggle: function (checked) {
-    isInInfoMode = checked;
+    mode = checked ? "info" : "";
   },
 });
 infoBar.addControl(infomativeToggleButton);
+
+const buildingApproveToggleButton = new Toggle({
+  title: "Building Appovae",
+  html: '<i class="fa-solid fa-check"></i>',
+  onToggle: function (checked) {
+    mode = checked ? "approve" : "";
+  },
+});
+infoBar.addControl(buildingApproveToggleButton);

@@ -1,6 +1,22 @@
 const API_OBJECTS_URL = {
   Street: "http://127.0.0.1:8000/registerStreet/",
   Building: "http://127.0.0.1:8000/registerBuilding/",
+  BuildingApprove: "http://127.0.0.1:8000/buildingApprove/",
+};
+
+const MESSAGES = {
+  Street: {
+    success: "The Street has been registered correctly",
+    error: "Some error when registering the Street",
+  },
+  Building: {
+    success: "The Building has been registered correctly",
+    error: "Some error when registering the Building",
+  },
+  BuildingApprove: {
+    success: "The Building has been approved correctly",
+    error: "Some error when approving the Building",
+  },
 };
 
 async function requestService(url, options = {}) {
@@ -40,9 +56,7 @@ async function manageObjectPersistence(
     layerToAddObject.getSource().updateParams(params);
   }
   informativeDialog.show(
-    successresponse
-      ? "The " + objectType + " has been registered correctly"
-      : "Some error when registering the " + objectType
+    successresponse ? MESSAGES[objectType].success : MESSAGES[objectType].error
   );
 }
 

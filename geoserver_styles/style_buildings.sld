@@ -6,10 +6,36 @@
       <se:Name>buildings</se:Name>
       <se:FeatureTypeStyle>
         <se:Rule>
-          <se:Name>Single symbol</se:Name>
+          <se:Name>Pending</se:Name>
+          <ogc:Filter>
+            <ogc:PropertyIsEqualTo>
+              <ogc:PropertyName>state_id</ogc:PropertyName>
+              <ogc:Literal>2</ogc:Literal>
+            </ogc:PropertyIsEqualTo>
+          </ogc:Filter>
           <se:PolygonSymbolizer>
             <se:Fill>
               <se:SvgParameter name="fill">#0d39e8</se:SvgParameter>
+              <se:SvgParameter name="fill-opacity">0.75</se:SvgParameter>
+            </se:Fill>
+            <se:Stroke>
+              <se:SvgParameter name="stroke">#072cff</se:SvgParameter>
+              <se:SvgParameter name="stroke-width">2</se:SvgParameter>
+              <se:SvgParameter name="stroke-linejoin">bevel</se:SvgParameter>
+            </se:Stroke>
+          </se:PolygonSymbolizer>
+        </se:Rule>
+        <se:Rule>
+          <se:Name>Approve</se:Name>
+          <ogc:Filter>
+            <ogc:PropertyIsEqualTo>
+              <ogc:PropertyName>state_id</ogc:PropertyName>
+              <ogc:Literal>1</ogc:Literal>
+            </ogc:PropertyIsEqualTo>
+          </ogc:Filter>
+          <se:PolygonSymbolizer>
+            <se:Fill>
+              <se:SvgParameter name="fill">#00ff0dc</se:SvgParameter>
               <se:SvgParameter name="fill-opacity">0.75</se:SvgParameter>
             </se:Fill>
             <se:Stroke>
