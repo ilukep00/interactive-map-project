@@ -53,7 +53,7 @@ const streets_layers = new TileLayer({
       STYLES: "style_streets",
     },
   }),
-  title: "Buildings",
+  title: "Streets",
 });
 
 const points_layers = new TileLayer({
@@ -166,6 +166,11 @@ map.on("singleclick", async function (event) {
     const response = await requestService(featureInfoUrl);
     if (response.features.length === 1) {
       const feature = response.features[0];
+      if (feature.properties.state_id === 1) {
+        informativeDialog.show("The building is already approved");
+        return;
+      }
+
       const featureId = feature.id.split(".")[1];
       const params = {
         p_building_id: featureId,
@@ -176,6 +181,39 @@ map.on("singleclick", async function (event) {
         buildings_layers,
         informativeDialog
       );
+    }
+  } else if (mode === "delete") {
+    const coordinate = event.coordinate;
+    const resolution = map.getView().getResolution();
+    const projection = map.getView().getProjection();
+    const params = { INFO_FORMAT: "application/json", FEATURE_COUNT: 1 };
+    const layers = [buildings_layers, streets_layers, points_layers];
+    for (const layer of layers) {
+      const featureInfoUrl = layer
+        .getSource()
+        .getFeatureInfoUrl(coordinate, resolution, projection, params);
+      const response = await requestService(featureInfoUrl);
+      if (response.features.length === 1) {
+        const feature = response.features[0];
+        const [layer_name, featureId] = feature.id.split(".");
+        const params = {
+          p_geom_id: featureId,
+        };
+        let endpointName = "";
+        if (layer_name === "buildings") {
+          endpointName = "BuildingDeletion";
+        } else if (layer_name === "streets") {
+          endpointName = "StreetDeletion";
+        } else if (layer_name === "points") {
+          endpointName = "PointDeletion";
+        }
+        await manageObjectPersistence(
+          endpointName,
+          params,
+          layer,
+          informativeDialog
+        );
+      }
     }
   }
 });
@@ -393,10 +431,19 @@ const infomativeToggleButton = new Toggle({
 infoBar.addControl(infomativeToggleButton);
 
 const buildingApproveToggleButton = new Toggle({
-  title: "Building Appovae",
+  title: "Building Approve",
   html: '<i class="fa-solid fa-check"></i>',
   onToggle: function (checked) {
     mode = checked ? "approve" : "";
   },
 });
 infoBar.addControl(buildingApproveToggleButton);
+
+const deleteToggleButton = new Toggle({
+  title: "Delete Geometry",
+  html: '<i class="fa-solid fa-trash"></i>',
+  onToggle: function (checked) {
+    mode = checked ? "delete" : "";
+  },
+});
+infoBar.addControl(deleteToggleButton);

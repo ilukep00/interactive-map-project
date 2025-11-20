@@ -16,6 +16,9 @@ class BaseObject(BaseModel):
 class BuildingApprove(BaseModel):
     p_building_id: int
 
+class GeometryDeletion(BaseModel):
+    p_geom_id: int
+
 app = FastAPI()
 
 app.add_middleware(
@@ -35,12 +38,24 @@ async def register_street(item: BaseObject):
     return call_postgres_function('fn_street_register',item.p_wkt, item.p_name)
 
 @app.post("/buildingApprove/")
-async def register_street(item: BuildingApprove):
+async def building_approve(item: BuildingApprove):
     return call_postgres_function('fn_building_approve',item.p_building_id)
 
 @app.post("/registerPoint/")
-async def register_street(item: BaseObject):
+async def register_point(item: BaseObject):
     return call_postgres_function('fn_point_register',item.p_wkt, item.p_name)
+
+@app.post("/buildingDeletion/")
+async def building_deletion(item: GeometryDeletion):
+    return call_postgres_function('fn_building_deletion',item.p_geom_id)
+
+@app.post("/streetDeletion/")
+async def street_deletion(item: GeometryDeletion):
+    return call_postgres_function('fn_street_deletion',item.p_geom_id)
+
+@app.post("/pointDeletion/")
+async def street_deletion(item: GeometryDeletion):
+    return call_postgres_function('fn_point_deletion',item.p_geom_id)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
