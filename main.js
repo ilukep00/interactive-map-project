@@ -12,8 +12,6 @@ import { createStringXY } from "ol/coordinate";
 import ScaleLine from "ol/control/ScaleLine.js";
 import VectorLayer from "ol/layer/Vector.js";
 import VectorSource from "ol/source/Vector.js";
-import Draw from "ol/interaction/Draw.js";
-import WKT from "ol/format/WKT.js";
 import TileWMS from "ol/source/TileWMS.js";
 
 import LayerSwitcher from "ol-ext/control/LayerSwitcher";
@@ -22,13 +20,11 @@ import Toggle from "ol-ext/control/Toggle";
 import Dialog from "ol-ext/control/Dialog";
 import Popup from "ol-ext/overlay/Popup";
 
-import { manageObjectPersistence } from "./js_utilities/serviceUtils";
-
 import clickHandler from "./js_utilities/clickHandlerUtils";
 
 import "./style.css";
+import registerDrawToggleButton from "./js_utilities/registerDrawToggleButtonsUtils";
 
-let wkt_data;
 let mode = "";
 
 const buildings_layers = new TileLayer({
@@ -177,157 +173,34 @@ const vectorDrawingLayer = new VectorLayer({
 map.addLayer(vectorDrawingLayer);
 
 // ADDING TOGGLE BUTTON CONTROL FOR DRAW A POINT TO DRAWINGBAR
-const pointToggleButton = new Toggle({
-  title: "Draw a Point",
-  html: '<i class="fa-solid fa-location-dot"></i>',
-  interaction: new Draw({
-    type: "Point",
-    source: vectorDrawingLayer.getSource(),
-  }),
-});
-drawingBar.addControl(pointToggleButton);
-
-const pointFormDialog = new Dialog({
-  title: "Register Point",
-  className: "registerPoint",
-  content:
-    'Point Name: <br/> <input type="text" class="point_name form_input"> <br/>',
-  buttons: { submit: "Accept", cancel: "Cancel" },
-});
-map.addControl(pointFormDialog);
-
-pointFormDialog.on("button", async function (event) {
-  if (event?.button === "submit") {
-    const point_name = event.inputs["point_name"]?.value;
-    const params = {
-      p_wkt: wkt_data,
-      p_name: point_name,
-    };
-    await manageObjectPersistence(
-      "Point",
-      params,
-      points_layers,
-      informativeDialog
-    );
-  }
-
-  if (event?.button) {
-    vectorDrawingLayer.getSource().clear();
-    event.inputs["point_name"].value = "";
-  }
-});
+registerDrawToggleButton(
+  map,
+  "Point",
+  vectorDrawingLayer,
+  drawingBar,
+  points_layers,
+  informativeDialog
+);
 
 // ADDING TOGGLE BUTTON CONTROL FOR DRAW A LINESTRING TO DRAWINGBAR
-const lineToggleButton = new Toggle({
-  title: "Draw a Line",
-  html: '<i class="fa-solid fa-share-nodes"></i>',
-  interaction: new Draw({
-    type: "LineString",
-    source: vectorDrawingLayer.getSource(),
-  }),
-});
-drawingBar.addControl(lineToggleButton);
-
-const streetFormDialog = new Dialog({
-  title: "Register Street",
-  className: "registerForm",
-  content:
-    'Street Name: <br/> <input type="text" class="street_name form_input"> <br/>',
-  buttons: { submit: "Accept", cancel: "Cancel" },
-});
-map.addControl(streetFormDialog);
-
-streetFormDialog.on("button", async function (event) {
-  if (event?.button === "submit") {
-    const street_name = event.inputs["street_name"]?.value;
-    const params = {
-      p_wkt: wkt_data,
-      p_name: street_name,
-    };
-    await manageObjectPersistence(
-      "Street",
-      params,
-      streets_layers,
-      informativeDialog
-    );
-  }
-
-  if (event?.button) {
-    vectorDrawingLayer.getSource().clear();
-    event.inputs["street_name"].value = "";
-  }
-});
+registerDrawToggleButton(
+  map,
+  "LineString",
+  vectorDrawingLayer,
+  drawingBar,
+  points_layers,
+  informativeDialog
+);
 
 // ADDING TOGGLE BUTTON CONTROL FOR DRAW A POLYGON TO DRAWINGBAR
-const polygonToggleButton = new Toggle({
-  title: "Draw a Polygon",
-  html: '<i class="fa-regular fa-square"></i>',
-  interaction: new Draw({
-    type: "Polygon",
-    source: vectorDrawingLayer.getSource(),
-  }),
-});
-drawingBar.addControl(polygonToggleButton);
-
-const buildingFormDialog = new Dialog({
-  title: "Register Building",
-  className: "registerForm",
-  content:
-    'Building Code: <br/> <input type="text" class="building_code form_input"> <br/> Observation: <br/> <input type="text" class="observation form_input">',
-  buttons: { submit: "Accept", cancel: "Cancel" },
-});
-map.addControl(buildingFormDialog);
-
-buildingFormDialog.on("button", async function (event) {
-  if (event?.button === "submit") {
-    const building_code = event.inputs["building_code"]?.value;
-    const observation = event.inputs["observation"]?.value;
-
-    const params = {
-      p_wkt: wkt_data,
-      p_building_cod: building_code,
-      p_observation: observation,
-    };
-    await manageObjectPersistence(
-      "Building",
-      params,
-      buildings_layers,
-      informativeDialog
-    );
-  }
-
-  if (event?.button) {
-    vectorDrawingLayer.getSource().clear();
-    event.inputs["building_code"].value = "";
-    event.inputs["observation"].value = "";
-  }
-});
-
-function getDrawDone(event, type) {
-  console.log(event);
-  const wktFormat = new WKT({});
-  wkt_data = wktFormat.writeFeature(event.feature, {
-    dataProjection: "EPSG:4326",
-    featureProjection: "EPSG:3857",
-  });
-  if (type === "Polygon") {
-    buildingFormDialog.show();
-  } else if (type === "LineString") {
-    streetFormDialog.show();
-  } else {
-    pointFormDialog.show();
-  }
-}
-
-pointToggleButton.getInteraction().on("drawend", function (event) {
-  getDrawDone(event, "Point");
-});
-lineToggleButton.getInteraction().on("drawend", function (event) {
-  getDrawDone(event, "LineString");
-});
-polygonToggleButton.getInteraction().on("drawend", function (event) {
-  getDrawDone(event, "Polygon");
-});
+registerDrawToggleButton(
+  map,
+  "Polygon",
+  vectorDrawingLayer,
+  drawingBar,
+  buildings_layers,
+  informativeDialog
+);
 
 const infoBar = new Bar({ group: true, toggleOne: true });
 mainBar.addControl(infoBar);
