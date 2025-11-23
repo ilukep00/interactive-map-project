@@ -22,10 +22,9 @@ import Toggle from "ol-ext/control/Toggle";
 import Dialog from "ol-ext/control/Dialog";
 import Popup from "ol-ext/overlay/Popup";
 
-import {
-  manageObjectPersistence,
-  requestService,
-} from "./js_utilities/serviceUtils";
+import { manageObjectPersistence } from "./js_utilities/serviceUtils";
+
+import clickHandler from "./js_utilities/clickHandlerUtils";
 
 import "./style.css";
 
@@ -114,107 +113,19 @@ const informativeDialog = new Dialog({ hideOnClick: true });
 map.addControl(informativeDialog);
 
 map.on("singleclick", async function (event) {
-  if (mode === "info") {
-    const coordinate = event.coordinate;
-    const resolution = map.getView().getResolution();
-    const projection = map.getView().getProjection();
-    const params = { INFO_FORMAT: "application/json", FEATURE_COUNT: 50 };
-
-    const layers = [buildings_layers, streets_layers, points_layers];
-    let featurePropertiesInfo = "";
-    for (const layer of layers) {
-      const featureInfoUrl = layer
-        .getSource()
-        .getFeatureInfoUrl(coordinate, resolution, projection, params);
-
-      const response = await requestService(featureInfoUrl);
-
-      if (response.features.length > 0) {
-        featurePropertiesInfo += "<div><b>Results : </b></div>";
-        featurePropertiesInfo += response.features.reduce(
-          (featureInfo, feature) => {
-            let propertiesInfo = "";
-            for (let property in feature.properties) {
-              propertiesInfo +=
-                "<div><b>" +
-                property +
-                " : </b>" +
-                response.features[0].properties[property] +
-                "</div>";
-            }
-            featureInfo += propertiesInfo + "<br>";
-            return featureInfo;
-          },
-          ""
-        );
-      }
-    }
-    featureInformationPopup.show(
-      coordinate,
-      featurePropertiesInfo !== ""
-        ? featurePropertiesInfo
-        : "<div>No results found</div>"
+  if (mode !== "") {
+    const layers =
+      mode === "approve"
+        ? [buildings_layers]
+        : [buildings_layers, streets_layers, points_layers];
+    await clickHandler(
+      event,
+      map,
+      layers,
+      mode,
+      informativeDialog,
+      featureInformationPopup
     );
-  } else if (mode === "approve") {
-    const coordinate = event.coordinate;
-    const resolution = map.getView().getResolution();
-    const projection = map.getView().getProjection();
-    const params = { INFO_FORMAT: "application/json", FEATURE_COUNT: 1 };
-    const featureInfoUrl = buildings_layers
-      .getSource()
-      .getFeatureInfoUrl(coordinate, resolution, projection, params);
-    const response = await requestService(featureInfoUrl);
-    if (response.features.length === 1) {
-      const feature = response.features[0];
-      if (feature.properties.state_id === 1) {
-        informativeDialog.show("The building is already approved");
-        return;
-      }
-
-      const featureId = feature.id.split(".")[1];
-      const params = {
-        p_building_id: featureId,
-      };
-      await manageObjectPersistence(
-        "BuildingApprove",
-        params,
-        buildings_layers,
-        informativeDialog
-      );
-    }
-  } else if (mode === "delete") {
-    const coordinate = event.coordinate;
-    const resolution = map.getView().getResolution();
-    const projection = map.getView().getProjection();
-    const params = { INFO_FORMAT: "application/json", FEATURE_COUNT: 1 };
-    const layers = [buildings_layers, streets_layers, points_layers];
-    for (const layer of layers) {
-      const featureInfoUrl = layer
-        .getSource()
-        .getFeatureInfoUrl(coordinate, resolution, projection, params);
-      const response = await requestService(featureInfoUrl);
-      if (response.features.length === 1) {
-        const feature = response.features[0];
-        const [layer_name, featureId] = feature.id.split(".");
-        const params = {
-          p_geom_id: featureId,
-        };
-        let endpointName = "";
-        if (layer_name === "buildings") {
-          endpointName = "BuildingDeletion";
-        } else if (layer_name === "streets") {
-          endpointName = "StreetDeletion";
-        } else if (layer_name === "points") {
-          endpointName = "PointDeletion";
-        }
-        await manageObjectPersistence(
-          endpointName,
-          params,
-          layer,
-          informativeDialog
-        );
-      }
-    }
   }
 });
 
