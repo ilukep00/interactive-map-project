@@ -16,7 +16,6 @@ import TileWMS from "ol/source/TileWMS.js";
 
 import LayerSwitcher from "ol-ext/control/LayerSwitcher";
 import Bar from "ol-ext/control/Bar";
-import Toggle from "ol-ext/control/Toggle";
 import Dialog from "ol-ext/control/Dialog";
 import Popup from "ol-ext/overlay/Popup";
 
@@ -24,8 +23,12 @@ import clickHandler from "./js_utilities/clickHandlerUtils";
 
 import "./style.css";
 import registerDrawToggleButton from "./js_utilities/registerDrawToggleButtonsUtils";
+import registerInfoToggleButton from "./js_utilities/registerInfoToggleButtonUtil";
 
 let mode = "";
+function setMode(value) {
+  mode = value;
+}
 
 const buildings_layers = new TileLayer({
   source: new TileWMS({
@@ -205,29 +208,11 @@ registerDrawToggleButton(
 const infoBar = new Bar({ group: true, toggleOne: true });
 mainBar.addControl(infoBar);
 
-const infomativeToggleButton = new Toggle({
-  title: "Information",
-  html: '<i class="fa-solid fa-info"></i>',
-  onToggle: function (checked) {
-    mode = checked ? "info" : "";
-  },
-});
-infoBar.addControl(infomativeToggleButton);
+// ADDING TOGGLE BUTTON CONTROL FOR GETTING INFORMATION OF A POLYGON
+registerInfoToggleButton("Information", infoBar, setMode);
 
-const buildingApproveToggleButton = new Toggle({
-  title: "Building Approve",
-  html: '<i class="fa-solid fa-check"></i>',
-  onToggle: function (checked) {
-    mode = checked ? "approve" : "";
-  },
-});
-infoBar.addControl(buildingApproveToggleButton);
+// ADDING TOGGLE BUTTON CONTROL FOR APPROVING A BUILDING
+registerInfoToggleButton("Approve", infoBar, setMode);
 
-const deleteToggleButton = new Toggle({
-  title: "Delete Geometry",
-  html: '<i class="fa-solid fa-trash"></i>',
-  onToggle: function (checked) {
-    mode = checked ? "delete" : "";
-  },
-});
-infoBar.addControl(deleteToggleButton);
+// ADDING TOGGLE BUTTON CONTROL FOR DELETING A POLYGON
+registerInfoToggleButton("Delete", infoBar, setMode);
