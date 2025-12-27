@@ -17,7 +17,7 @@ import java.util.Scanner;
 public class GeomInfra {
 
     public static void main(String[] args) {
-        String url = "jdbc:postgresql://localhost:5432/postgres";
+        String baseUrl = "jdbc:postgresql://localhost:5432/";
         
         Scanner scanner = new Scanner(System.in);
         
@@ -30,7 +30,7 @@ public class GeomInfra {
         System.out.println("Insert your database name: ");
         String dbName = scanner.nextLine();
         
-        try (Connection conn = DriverManager.getConnection(url, username, password); 
+        try (Connection conn = DriverManager.getConnection(baseUrl+"postgres", username, password); 
                 Statement stmt = conn.createStatement()) {
             
             String sql = "CREATE DATABASE "+dbName;
@@ -40,6 +40,19 @@ public class GeomInfra {
             
         } catch(SQLException e){
             System.err.println(e.getMessage());
+            return;
         }
+        
+        try (Connection conn = DriverManager.getConnection(baseUrl+dbName, username, password); 
+                Statement stmt = conn.createStatement()) {
+            // Creating the extension of postgis for the new database created
+            String sql = "CREATE EXTENSION postgis;";
+            stmt.execute(sql);
+            
+            System.out.println("postgis extension created successfully for "+dbName+" !");
+        } catch(SQLException e){
+            System.err.println(e.getMessage());
+        }
+        
     }
 }
