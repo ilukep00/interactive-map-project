@@ -4,7 +4,7 @@
 
 CREATE TABLE IF NOT EXISTS public.points
 (
-    point_id integer NOT NULL DEFAULT nextval('points_point_id_seq'::regclass),
+    point_id serial NOT NULL,
     geom geometry(Geometry,4326),
     name character varying(100) COLLATE pg_catalog."default",
     register_date timestamp without time zone,

@@ -18,6 +18,7 @@ public class GeomInfra {
     
     public static final String BUILDING_TABLE_PATH = "../sql_structure/buildings_table.sql";
     public static final String STREET_TABLE_PATH = "../sql_structure/streets_table.sql";
+    public static final String POINT_TABLE_PATH = "../sql_structure/points_table.sql";
 
     public static void main(String[] args) {
         String baseUrl = "jdbc:postgresql://localhost:5432/";
@@ -61,6 +62,10 @@ public class GeomInfra {
             // Creating streets table
             SpringScriptUtility.runScript(STREET_TABLE_PATH, conn);
             System.out.println("Streets table created successfully");
+            
+            // Creating points table
+            SpringScriptUtility.runScript(POINT_TABLE_PATH, conn);
+            System.out.println("Points table created successfully");
             
         } catch(SQLException e){
             System.err.println(e.getMessage());
