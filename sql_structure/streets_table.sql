@@ -4,7 +4,7 @@
 
 CREATE TABLE IF NOT EXISTS public.streets
 (
-    street_id integer NOT NULL DEFAULT nextval('streets_street_id_seq'::regclass),
+    street_id serial NOT NULL,
     geom geometry(Geometry,4326),
     register_date timestamp without time zone,
     name character varying COLLATE pg_catalog."default",
