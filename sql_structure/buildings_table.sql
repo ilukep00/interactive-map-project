@@ -4,7 +4,7 @@
 
 CREATE TABLE IF NOT EXISTS public.buildings
 (
-    building_id integer NOT NULL DEFAULT nextval('lands_land_id_seq'::regclass),
+    building_id serial NOT NULL,
     building_cod character varying(10) COLLATE pg_catalog."default",
     geom geometry(Geometry,4326),
     observation character varying(100) COLLATE pg_catalog."default",

@@ -15,7 +15,9 @@ import java.util.Scanner;
  * @author lukep
  */
 public class GeomInfra {
-
+    
+    public static final String BUILDING_TABLE_PATH = "../sql_structure/buildings_table.sql";
+    
     public static void main(String[] args) {
         String baseUrl = "jdbc:postgresql://localhost:5432/";
         
@@ -50,6 +52,11 @@ public class GeomInfra {
             stmt.execute(sql);
             
             System.out.println("postgis extension created successfully for "+dbName+" !");
+            
+            // Creating buildings table
+            SpringScriptUtility.runScript(BUILDING_TABLE_PATH, conn);
+            System.out.println("Buldings table created successfully");
+            
         } catch(SQLException e){
             System.err.println(e.getMessage());
         }
