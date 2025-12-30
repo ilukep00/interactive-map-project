@@ -26,6 +26,7 @@ public class GeomInfra {
     public static final String BUILDING_DELETION_PATH = PREFIX_PATH+"fn_building_deletion.sql";
     public static final String STREET_DELETION_PATH = PREFIX_PATH+"fn_street_deletion.sql";
     public static final String POINT_DELETION_PATH = PREFIX_PATH+"fn_point_deletion.sql";
+    public static final String BUILDING_APPROVE_PATH = PREFIX_PATH+"fn_building_approve.sql";
 
 
     public static void main(String[] args) {
@@ -99,6 +100,9 @@ public class GeomInfra {
             SpringScriptUtility.runScript(POINT_DELETION_PATH, conn, ";;");
             System.out.println("deletion point function created successfully");
             
+            // Adding approve building function
+            SpringScriptUtility.runScript(BUILDING_APPROVE_PATH, conn, ";;");
+            System.out.println("approve building function created successfully");
         } catch(SQLException e){
             System.err.println(e.getMessage());
         }

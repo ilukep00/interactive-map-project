@@ -17,4 +17,4 @@ BEGIN
 	return query
 	SELECT p_building_id;
 END;
-$BODY$;
+$BODY$;;
