@@ -16,19 +16,23 @@ import java.util.Scanner;
  */
 public class GeomInfra {
     
-    private static final String PREFIX_PATH = "../sql_structure/";
-    public static final String BUILDING_TABLE_PATH = PREFIX_PATH+"buildings_table.sql";
-    public static final String STREET_TABLE_PATH = PREFIX_PATH+"streets_table.sql";
-    public static final String POINT_TABLE_PATH = PREFIX_PATH+"points_table.sql";
-    public static final String BUILDING_REGISTER_PATH = PREFIX_PATH+"fn_building_register.sql";
-    public static final String STREET_REGISTER_PATH = PREFIX_PATH+"fn_street_register.sql";
-    public static final String POINT_REGISTER_PATH = PREFIX_PATH+"fn_point_register.sql";
-    public static final String BUILDING_DELETION_PATH = PREFIX_PATH+"fn_building_deletion.sql";
-    public static final String STREET_DELETION_PATH = PREFIX_PATH+"fn_street_deletion.sql";
-    public static final String POINT_DELETION_PATH = PREFIX_PATH+"fn_point_deletion.sql";
-    public static final String BUILDING_APPROVE_PATH = PREFIX_PATH+"fn_building_approve.sql";
-
-
+    private static final String SQL_STRUCTURE_PATH = "../sql_structure/";
+    public static final String BUILDING_TABLE_PATH = SQL_STRUCTURE_PATH+"buildings_table.sql";
+    public static final String STREET_TABLE_PATH = SQL_STRUCTURE_PATH+"streets_table.sql";
+    public static final String POINT_TABLE_PATH = SQL_STRUCTURE_PATH+"points_table.sql";
+    public static final String BUILDING_REGISTER_PATH = SQL_STRUCTURE_PATH+"fn_building_register.sql";
+    public static final String STREET_REGISTER_PATH = SQL_STRUCTURE_PATH+"fn_street_register.sql";
+    public static final String POINT_REGISTER_PATH = SQL_STRUCTURE_PATH+"fn_point_register.sql";
+    public static final String BUILDING_DELETION_PATH = SQL_STRUCTURE_PATH+"fn_building_deletion.sql";
+    public static final String STREET_DELETION_PATH = SQL_STRUCTURE_PATH+"fn_street_deletion.sql";
+    public static final String POINT_DELETION_PATH = SQL_STRUCTURE_PATH+"fn_point_deletion.sql";
+    public static final String BUILDING_APPROVE_PATH = SQL_STRUCTURE_PATH+"fn_building_approve.sql";
+    
+    private static final String SAMPLEDATA_PATH = "../sampledata/";
+    public static final String BUILDING_SAMPLEDATA_PATH = SAMPLEDATA_PATH+"building_sampledata.sql";
+    public static final String STREET_SAMPLEDATA_PATH = SAMPLEDATA_PATH+"street_sampledata.sql";
+    public static final String POINT_SAMPLEDATA_PATH = SAMPLEDATA_PATH+"point_sampledata.sql";
+    
     public static void main(String[] args) {
         String baseUrl = "jdbc:postgresql://localhost:5432/";
         
@@ -103,6 +107,18 @@ public class GeomInfra {
             // Adding approve building function
             SpringScriptUtility.runScript(BUILDING_APPROVE_PATH, conn, ";;");
             System.out.println("approve building function created successfully");
+            
+            // Inserting building sampledata
+            SpringScriptUtility.runScript(BUILDING_SAMPLEDATA_PATH, conn);
+            System.out.println("building sampledata inserted successfully");
+            
+            // Inserting street sampledata
+            SpringScriptUtility.runScript(STREET_SAMPLEDATA_PATH, conn);
+            System.out.println("street sampledata inserted successfully");
+            
+            // Inserting point sampledata
+            SpringScriptUtility.runScript(POINT_SAMPLEDATA_PATH, conn);
+            System.out.println("point sampledata inserted successfully");
         } catch(SQLException e){
             System.err.println(e.getMessage());
         }
