@@ -19,9 +19,9 @@ BEGIN
 	VALUES (p_building_cod, ST_GeomFromText(p_wkt, 4326), p_observation, now(), 2);
 
 	return query
-	SELECT currval('lands_land_id_seq');
+	SELECT currval('buildings_building_id_seq');
 END;
-$BODY$;
-
+$BODY$;;
 ALTER FUNCTION public.fn_building_register(character varying, character varying, character varying)
-    OWNER TO postgres;
+    OWNER TO postgres;;
+

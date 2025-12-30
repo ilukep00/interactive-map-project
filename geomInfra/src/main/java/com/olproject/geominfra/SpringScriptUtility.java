@@ -33,4 +33,22 @@ public class SpringScriptUtility {
           blockCommentEndDelimiter
         );
     }
+    public static void runScript(String path, Connection connection, String separator) {
+        boolean continueOnError = false;
+        boolean ignoreFailedDrops = false;
+        String commentPrefix = "--";
+        String blockCommentStartDelimiter = "/*";
+        String blockCommentEndDelimiter = "*/";
+        
+        ScriptUtils.executeSqlScript(
+          connection,
+          new EncodedResource(new PathResource(path)),
+          continueOnError,
+          ignoreFailedDrops,
+          commentPrefix,
+          separator,
+          blockCommentStartDelimiter,
+          blockCommentEndDelimiter
+        );
+    }
 }
