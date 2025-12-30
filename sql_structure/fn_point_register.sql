@@ -16,4 +16,4 @@ BEGIN
 	return query
 	SELECT currval('points_point_id_seq');
 END;
-$BODY$;
+$BODY$;;
