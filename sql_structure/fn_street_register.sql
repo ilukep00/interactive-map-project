@@ -21,6 +21,3 @@ BEGIN
 	SELECT currval('streets_street_id_seq');
 END;
 $BODY$;;
-
-ALTER FUNCTION public.fn_street_register(character varying, character varying)
-    OWNER TO postgres;;

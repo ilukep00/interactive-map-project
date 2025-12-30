@@ -22,6 +22,4 @@ BEGIN
 	SELECT currval('buildings_building_id_seq');
 END;
 $BODY$;;
-ALTER FUNCTION public.fn_building_register(character varying, character varying, character varying)
-    OWNER TO postgres;;
 
