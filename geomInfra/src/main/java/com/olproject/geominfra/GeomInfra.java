@@ -16,10 +16,12 @@ import java.util.Scanner;
  */
 public class GeomInfra {
     
-    public static final String BUILDING_TABLE_PATH = "../sql_structure/buildings_table.sql";
-    public static final String STREET_TABLE_PATH = "../sql_structure/streets_table.sql";
-    public static final String POINT_TABLE_PATH = "../sql_structure/points_table.sql";
-    public static final String BUILDING_REGISTER_PATH = "../sql_structure/fn_building_register.sql";
+    private static final String PREFIX_PATH = "../sql_structure/";
+    public static final String BUILDING_TABLE_PATH = PREFIX_PATH+"buildings_table.sql";
+    public static final String STREET_TABLE_PATH = PREFIX_PATH+"streets_table.sql";
+    public static final String POINT_TABLE_PATH = PREFIX_PATH+"points_table.sql";
+    public static final String BUILDING_REGISTER_PATH = PREFIX_PATH+"fn_building_register.sql";
+    public static final String STREET_REGISTER_PATH = PREFIX_PATH+"fn_street_register.sql";
 
     public static void main(String[] args) {
         String baseUrl = "jdbc:postgresql://localhost:5432/";
@@ -71,6 +73,10 @@ public class GeomInfra {
             // Adding register building function
             SpringScriptUtility.runScript(BUILDING_REGISTER_PATH, conn, ";;");
             System.out.println("register building function created successfully");
+            
+            // Adding register street function
+            SpringScriptUtility.runScript(STREET_REGISTER_PATH, conn, ";;");
+            System.out.println("register street function created successfully");
             
         } catch(SQLException e){
             System.err.println(e.getMessage());
