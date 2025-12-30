@@ -23,6 +23,7 @@ public class GeomInfra {
     public static final String BUILDING_REGISTER_PATH = PREFIX_PATH+"fn_building_register.sql";
     public static final String STREET_REGISTER_PATH = PREFIX_PATH+"fn_street_register.sql";
     public static final String POINT_REGISTER_PATH = PREFIX_PATH+"fn_point_register.sql";
+    public static final String BUILDING_DELETION_PATH = PREFIX_PATH+"fn_building_deletion.sql";
 
     public static void main(String[] args) {
         String baseUrl = "jdbc:postgresql://localhost:5432/";
@@ -82,6 +83,10 @@ public class GeomInfra {
             // Adding register point function
             SpringScriptUtility.runScript(POINT_REGISTER_PATH, conn, ";;");
             System.out.println("register point function created successfully");
+            
+            // Adding deletion building function
+            SpringScriptUtility.runScript(BUILDING_DELETION_PATH, conn, ";;");
+            System.out.println("deletion building function created successfully");
             
         } catch(SQLException e){
             System.err.println(e.getMessage());
