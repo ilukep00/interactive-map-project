@@ -16,4 +16,4 @@ BEGIN
 	return query
 	SELECT p_geom_id;
 END;
-$BODY$;
+$BODY$;;
