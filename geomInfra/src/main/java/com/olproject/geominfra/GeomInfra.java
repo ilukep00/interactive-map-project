@@ -119,7 +119,17 @@ public class GeomInfra {
             // Inserting point sampledata
             SpringScriptUtility.runScript(POINT_SAMPLEDATA_PATH, conn);
             System.out.println("point sampledata inserted successfully");
-        } catch(SQLException e){
+            
+            System.out.println("Insert your geoserver user name: ");
+            String geousername = scanner.nextLine();
+        
+            System.out.println("Insert your geoserver password: ");
+            String geopassword = scanner.nextLine();
+            
+            GeoServerClient gsc = new GeoServerClient(geousername, geopassword);
+            
+            gsc.createWorkspace("testproject");
+        } catch(Exception e){
             System.err.println(e.getMessage());
         }
         
