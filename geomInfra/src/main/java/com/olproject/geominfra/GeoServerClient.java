@@ -37,7 +37,7 @@ public class GeoServerClient {
         """.formatted(workspace);
 
         sendPost(url, json);
-        System.out.println("Workspace creado: " + workspace);
+        System.out.println("Workspace created: " + workspace);
     }
     
         public void createPostgisDatastore(String workspace, String datastoreName, String postgresDBName, String postgresUserName, String postgresPassord) throws Exception {
@@ -62,7 +62,7 @@ public class GeoServerClient {
         """.formatted(datastoreName,postgresDBName,postgresUserName,postgresPassord);
 
         sendPost(url, json);
-        System.out.println("Datastore creado: " + datastoreName);
+        System.out.println("Datastore created: " + datastoreName);
     }
         
     private void sendPost(String url, String json) throws Exception {
