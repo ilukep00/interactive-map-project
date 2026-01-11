@@ -129,6 +129,7 @@ public class GeomInfra {
             GeoServerClient gsc = new GeoServerClient(geousername, geopassword);
             
             gsc.createWorkspace("testproject");
+            gsc.createPostgisDatastore("testproject", "testprojectds", dbName, username, password);
         } catch(Exception e){
             System.err.println(e.getMessage());
         }

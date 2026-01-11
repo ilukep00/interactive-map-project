@@ -40,7 +40,31 @@ public class GeoServerClient {
         System.out.println("Workspace creado: " + workspace);
     }
     
-    
+        public void createPostgisDatastore(String workspace, String datastoreName, String postgresDBName, String postgresUserName, String postgresPassord) throws Exception {
+        String url = this.geoserverUrl + "/workspaces/" + workspace + "/datastores";
+
+        String json = """
+        {
+          "dataStore": {
+            "name": "%s",
+            "connectionParameters": {
+              "entry": [
+                { "@key": "dbtype", "$": "postgis" },
+                { "@key": "host", "$": "localhost" },
+                { "@key": "port", "$": "5432" },
+                { "@key": "database", "$": "%s" },
+                { "@key": "user", "$": "%s" },
+                { "@key": "passwd", "$": "%s" }
+              ]
+            }
+          }
+        }
+        """.formatted(datastoreName,postgresDBName,postgresUserName,postgresPassord);
+
+        sendPost(url, json);
+        System.out.println("Datastore creado: " + datastoreName);
+    }
+        
     private void sendPost(String url, String json) throws Exception {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
 
