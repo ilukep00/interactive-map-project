@@ -81,16 +81,16 @@ public class GeoServerClient {
             "srs": "EPSG:4326",
             "nativeBoundingBox": {
                 "minx": -1.639344877562201,
-                "maxx": 42.816931923319146,
-                "miny": -1.638712161089852,
+                "maxx": -1.638712161089852,
+                "miny": 42.816931923319146,
                 "maxy": 42.817389469858426,
                 "crs": "EPSG:4326"
             },
             "latLonBoundingBox": {
-                "minx": -74.0118315772888,
-                "maxx": -74.00857344353275,
-                "miny": 40.70754683896324,
-                "maxy": 40.711945649065406,
+                "minx": -1.639344877562201,
+                "maxx": -1.638712161089852,
+                "miny": 42.816931923319146,
+                "maxy": 42.817389469858426,
                 "crs": "EPSG:4326"
             },
             "attributes": {
@@ -106,6 +106,48 @@ public class GeoServerClient {
 
         sendPost(url, json);
         System.out.println("Published layer: buildings");
+    }
+    
+    public void publishStreet(
+        String workspace,
+        String datastore) throws Exception {
+
+        String url = this.geoserverUrl + "/workspaces/" + workspace +
+                     "/datastores/" + datastore + "/featuretypes";
+
+        String json = """
+        {
+          "featureType": {
+            "name": "streets",
+            "nativeName": "streets",
+            "srs": "EPSG:4326",
+            "nativeBoundingBox": {
+                "minx": -1.640374540463723,
+                "maxx": -1.639841458957705,
+                "miny": 42.81699431171151,
+                "maxy": 42.817385340848915,
+                "crs": "EPSG:4326"
+            },
+            "latLonBoundingBox": {
+                "minx": -1.640374540463723,
+                "maxx": -1.639841458957705,
+                "miny": 42.81699431171151,
+                "maxy": 42.817385340848915,
+                "crs": "EPSG:4326"
+            },
+            "attributes": {
+                "attribute": [
+                  {
+                    "name": "geom"
+                  }
+                ]
+             }
+          }
+        }
+        """;
+
+        sendPost(url, json);
+        System.out.println("Published layer: streets");
     }
         
     private void sendPost(String url, String json) throws Exception {
