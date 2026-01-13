@@ -149,7 +149,49 @@ public class GeoServerClient {
         sendPost(url, json);
         System.out.println("Published layer: streets");
     }
-        
+    
+    public void publishPoint(
+        String workspace,
+        String datastore) throws Exception {
+
+        String url = this.geoserverUrl + "/workspaces/" + workspace +
+                     "/datastores/" + datastore + "/featuretypes";
+
+        String json = """
+        {
+          "featureType": {
+            "name": "points",
+            "nativeName": "points",
+            "srs": "EPSG:4326",
+            "nativeBoundingBox": {
+                "minx": -1.639618000591409,
+                "maxx": -1.639418000591409,
+                "miny": 42.81705380117765,
+                "maxy": 42.81725380117766,
+                "crs": "EPSG:4326"
+            },
+            "latLonBoundingBox": {
+                "minx": -1.639618000591409,
+                "maxx": -1.639418000591409,
+                "miny": 42.81705380117765,
+                "maxy": 42.81725380117766,
+                "crs": "EPSG:4326"
+            },
+            "attributes": {
+                "attribute": [
+                  {
+                    "name": "geom"
+                  }
+                ]
+             }
+          }
+        }
+        """;
+
+        sendPost(url, json);
+        System.out.println("Published layer: points");
+    }
+    
     private void sendPost(String url, String json) throws Exception {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
 

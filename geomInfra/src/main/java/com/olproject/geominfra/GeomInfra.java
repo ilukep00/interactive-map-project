@@ -132,6 +132,7 @@ public class GeomInfra {
             gsc.createPostgisDatastore("testproject", "testprojectds", dbName, username, password);
             gsc.publishBuilding("testproject", "testprojectds");
             gsc.publishStreet("testproject", "testprojectds");
+            gsc.publishPoint("testproject", "testprojectds");
         } catch(Exception e){
             System.err.println(e.getMessage());
         }
