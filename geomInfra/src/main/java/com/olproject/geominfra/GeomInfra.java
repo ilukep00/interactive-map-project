@@ -130,6 +130,7 @@ public class GeomInfra {
             
             gsc.createWorkspace("testproject");
             gsc.createPostgisDatastore("testproject", "testprojectds", dbName, username, password);
+            gsc.publishBuilding("testproject", "testprojectds");
         } catch(Exception e){
             System.err.println(e.getMessage());
         }
