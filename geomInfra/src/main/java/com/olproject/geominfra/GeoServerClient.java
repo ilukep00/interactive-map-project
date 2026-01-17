@@ -149,6 +149,9 @@ public class GeoServerClient {
                 "attribute": [
                   {
                     "name": "geom"
+                  },
+                  {
+                    "name": "name"
                   }
                 ]
              }

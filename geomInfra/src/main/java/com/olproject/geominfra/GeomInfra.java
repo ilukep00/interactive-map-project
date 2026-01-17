@@ -35,6 +35,7 @@ public class GeomInfra {
     
     private static final String GEOSERVERSTYLES_PATH = "../geoserver_styles/";
     public static final String BUILDING_GEOSERVERSTYLE_PATH = GEOSERVERSTYLES_PATH+"style_buildings.sld";
+    public static final String STREET_GEOSERVERSTYLE_PATH = GEOSERVERSTYLES_PATH+"style_streets.sld";
     
     public static void main(String[] args) {
         String baseUrl = "jdbc:postgresql://localhost:5432/";
@@ -137,6 +138,7 @@ public class GeomInfra {
             gsc.publishStreet("testproject", "testprojectds");
             gsc.publishPoint("testproject", "testprojectds");
             gsc.publishStyle("testproject", BUILDING_GEOSERVERSTYLE_PATH, "buildings");
+            gsc.publishStyle("testproject", STREET_GEOSERVERSTYLE_PATH, "streets");
         } catch(Exception e){
             System.err.println(e.getMessage());
         }
