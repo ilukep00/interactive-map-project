@@ -4,12 +4,16 @@
  */
 package com.olproject.geominfra;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Base64;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 /**
  *
  * @author lukep
@@ -97,6 +101,12 @@ public class GeoServerClient {
                 "attribute": [
                   {
                     "name": "geom"
+                  },
+                  {
+                     "name": "building_cod"                                                 
+                  },
+                  {
+                     "name": "state_id"                                                                       
                   }
                 ]
              }
@@ -191,6 +201,42 @@ public class GeoServerClient {
         sendPost(url, json);
         System.out.println("Published layer: points");
     }
+    
+    public String readSld(String path) throws Exception {
+        return Files.readString(Path.of(path));
+    }
+    
+    public void publishStyle(String workspace, String styleFilePath, String styleName) throws Exception{
+        String url = this.geoserverUrl + "/workspaces/" + workspace +
+                     "/styles?name=" + styleName;
+        
+        String styleContent = readSld(styleFilePath);
+        sendSldPost(url, styleContent);
+        System.out.println("Published style:"+ styleName);
+    }
+    
+   private void sendSldPost(String url, String xml)throws Exception {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+
+            HttpPost post = new HttpPost(url);
+            post.setHeader("Content-Type", "application/vnd.ogc.sld+xml; charset=UTF-8");
+
+            String auth = this.user + ":" + this.password;
+            String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
+            post.setHeader("Authorization", "Basic " + encodedAuth);
+            
+            byte[] bytes = xml.getBytes(StandardCharsets.UTF_8);
+            post.setEntity(new ByteArrayEntity(bytes, ContentType.create("application/vnd.ogc.sld+xml", StandardCharsets.UTF_8)));
+
+            client.execute(post, response -> {
+                int code = response.getCode();
+                if (code != 201 && code != 200) {
+                    throw new RuntimeException("Error GeoServer: HTTP " + code);
+                }
+                return null;
+            });
+        }
+    }   
     
     private void sendPost(String url, String json) throws Exception {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
