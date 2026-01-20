@@ -140,7 +140,10 @@ public class GeomInfra {
             gsc.publishStyle("testproject", BUILDING_GEOSERVERSTYLE_PATH, "buildings");
             gsc.publishStyle("testproject", STREET_GEOSERVERSTYLE_PATH, "streets");
             gsc.assignStyleToLayer("testproject", "buildings", "buildings");
+            gsc.asssingGenericStyleToLayer("testproject", "buildings", "polygon");
             gsc.assignStyleToLayer("testproject", "streets", "streets");
+            gsc.asssingGenericStyleToLayer("testproject", "streets", "line");
+            gsc.asssingGenericStyleToLayer("testproject", "points", "point");
         } catch(Exception e){
             System.err.println(e.getMessage());
         }

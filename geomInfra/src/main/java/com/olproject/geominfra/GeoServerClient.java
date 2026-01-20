@@ -243,6 +243,24 @@ public class GeoServerClient {
     }
     
     
+    public void asssingGenericStyleToLayer(String workspace, String layerName, String styleName) throws Exception{
+        String url = this.geoserverUrl + "/layers/" + workspace + ":" + layerName;
+        
+        String json = """
+        {
+            "layer": {
+              "defaultStyle": {
+                "name": "%s"
+              }
+            }
+         }
+        """.formatted(styleName);
+        
+        sendPut(url,json);
+        System.out.println("Assigned style:"+ styleName + "layer: "+ layerName);
+        
+    }
+    
    private void sendSldPost(String url, String xml)throws Exception {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
 
