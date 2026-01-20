@@ -139,6 +139,8 @@ public class GeomInfra {
             gsc.publishPoint("testproject", "testprojectds");
             gsc.publishStyle("testproject", BUILDING_GEOSERVERSTYLE_PATH, "buildings");
             gsc.publishStyle("testproject", STREET_GEOSERVERSTYLE_PATH, "streets");
+            gsc.assignStyleToLayer("testproject", "buildings", "buildings");
+            gsc.assignStyleToLayer("testproject", "streets", "streets");
         } catch(Exception e){
             System.err.println(e.getMessage());
         }

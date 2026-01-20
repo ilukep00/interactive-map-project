@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.StringEntity;
@@ -218,6 +219,30 @@ public class GeoServerClient {
         System.out.println("Published style:"+ styleName);
     }
     
+    public void assignStyleToLayer(String workspace, String layerName, String styleName) throws Exception{
+        String url = this.geoserverUrl + "/layers/" + workspace + ":" + layerName;
+        
+        String json = """
+        {
+          "layer": {
+            "styles": {
+               "style": [
+                    {   
+                        "name": "%s",
+                        "workspace": "%s"
+                    }
+                ]        
+            }
+          }
+        }
+        """.formatted(styleName, workspace);
+        
+        sendPut(url,json);
+        System.out.println("Assigned style:"+ styleName + "layer: "+ layerName);
+        
+    }
+    
+    
    private void sendSldPost(String url, String xml)throws Exception {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
 
@@ -241,6 +266,28 @@ public class GeoServerClient {
         }
     }   
     
+   private void sendPut(String url, String json) throws Exception{
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+
+            HttpPut post = new HttpPut(url);
+            post.setHeader("Content-Type", "application/json");
+
+            String auth = this.user + ":" + this.password;
+            String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
+            post.setHeader("Authorization", "Basic " + encodedAuth);
+
+            post.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
+
+            client.execute(post, response -> {
+                int code = response.getCode();
+                if (code != 201 && code != 200) {
+                    throw new RuntimeException("Error GeoServer: HTTP " + code);
+                }
+                return null;
+            });
+        }
+   }
+   
     private void sendPost(String url, String json) throws Exception {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
 
