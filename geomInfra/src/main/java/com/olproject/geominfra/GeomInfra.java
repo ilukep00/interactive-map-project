@@ -48,8 +48,7 @@ public class GeomInfra {
         System.out.println("Insert your postgres password: ");
         String password = scanner.nextLine();
         
-        System.out.println("Insert your database name: ");
-        String dbName = scanner.nextLine();
+        String dbName = "ol_project";
         
         try (Connection conn = DriverManager.getConnection(baseUrl+"postgres", username, password); 
                 Statement stmt = conn.createStatement()) {
@@ -132,18 +131,21 @@ public class GeomInfra {
             
             GeoServerClient gsc = new GeoServerClient(geousername, geopassword);
             
-            gsc.createWorkspace("testproject");
-            gsc.createPostgisDatastore("testproject", "testprojectds", dbName, username, password);
-            gsc.publishBuilding("testproject", "testprojectds");
-            gsc.publishStreet("testproject", "testprojectds");
-            gsc.publishPoint("testproject", "testprojectds");
-            gsc.publishStyle("testproject", BUILDING_GEOSERVERSTYLE_PATH, "buildings");
-            gsc.publishStyle("testproject", STREET_GEOSERVERSTYLE_PATH, "streets");
-            gsc.assignStyleToLayer("testproject", "buildings", "buildings");
-            gsc.asssingGenericStyleToLayer("testproject", "buildings", "polygon");
-            gsc.assignStyleToLayer("testproject", "streets", "streets");
-            gsc.asssingGenericStyleToLayer("testproject", "streets", "line");
-            gsc.asssingGenericStyleToLayer("testproject", "points", "point");
+            String geoServerWorkSpace = "ol_project";
+            String geoServerDatastore = "ol_project_ds";
+            
+            gsc.createWorkspace(geoServerWorkSpace);
+            gsc.createPostgisDatastore(geoServerWorkSpace, geoServerDatastore, dbName, username, password);
+            gsc.publishBuilding(geoServerWorkSpace, geoServerDatastore);
+            gsc.publishStreet(geoServerWorkSpace, geoServerDatastore);
+            gsc.publishPoint(geoServerWorkSpace, geoServerDatastore);
+            gsc.publishStyle(geoServerWorkSpace, BUILDING_GEOSERVERSTYLE_PATH, "buildings");
+            gsc.publishStyle(geoServerWorkSpace, STREET_GEOSERVERSTYLE_PATH, "streets");
+            gsc.assignStyleToLayer(geoServerWorkSpace, "buildings", "buildings");
+            gsc.asssingGenericStyleToLayer(geoServerWorkSpace, "buildings", "polygon");
+            gsc.assignStyleToLayer(geoServerWorkSpace, "streets", "streets");
+            gsc.asssingGenericStyleToLayer(geoServerWorkSpace, "streets", "line");
+            gsc.asssingGenericStyleToLayer(geoServerWorkSpace, "points", "point");
         } catch(Exception e){
             System.err.println(e.getMessage());
         }
