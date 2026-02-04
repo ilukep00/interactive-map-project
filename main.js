@@ -35,8 +35,8 @@ const buildings_layers = new TileLayer({
     url: "http://localhost:8080/geoserver/wms",
     params: {
       VERSION: "1.1.1",
-      LAYERS: "project_ol:buildings",
-      STYLES: "style_buildings",
+      LAYERS: "ol_project:buildings",
+      STYLES: "buildings",
     },
   }),
   title: "Buildings",
@@ -47,8 +47,8 @@ const streets_layers = new TileLayer({
     url: "http://localhost:8080/geoserver/wms",
     params: {
       VERSION: "1.1.1",
-      LAYERS: "project_ol:streets",
-      STYLES: "style_streets",
+      LAYERS: "ol_project:streets",
+      STYLES: "streets",
     },
   }),
   title: "Streets",
@@ -59,7 +59,7 @@ const points_layers = new TileLayer({
     url: "http://localhost:8080/geoserver/wms",
     params: {
       VERSION: "1.1.1",
-      LAYERS: "project_ol:points",
+      LAYERS: "ol_project:points",
     },
   }),
   title: "Points",
