@@ -7,6 +7,17 @@ Iñaki Luque Pastor
 
 The main goal of this project is the development of an interactive map allowing to create and persist geometry
 
+## Project Structure
+
+### Database
+
+The following tables have been created for persisting the geometries:
+* buildings: In this table polygon geometries are stored
+* streets: In this table line geometries are stored
+* points: In this table point geometries are stored
+
+All the tables include a geom column for indicating the type of geometry that will be stored on it
+
 ## Deploying project locally
 
 ### Steps for running map web locally
