@@ -22,6 +22,19 @@ All the tables include a geom column for indicating the type of geometry that wi
 Those tables have been published as layers in Geoserver. Also some styles have been published and associated
 to the layers in order to show it in a proper way in the web application
 
+### API webservice
+An API webservice have been created using fastAPI for allowing to do modifications in the database tables for external systems
+The following endpoints have been created:
+* registerBuilding: This endpoint receives a polygon geometry and creates a new record for it in the buildings table
+* registerStreet: This endpoint receives a line geometry and creates a new record for it in the streets table
+* registerPoint: This endpoint receives a point geometry and creates a new record for it in the points table
+* buildingDeletion: This endpoint receives an id of building record and removes it from the buildings table
+* streetDeletion: This endpoint receives an id of street record and removes it from the streets table
+* pointDeletion: This endpoint receives an id of point record and removes it from the points table
+* buildingApprove: This endpoint receives an id of building record and change the status to approved of that record in the table
+
+Using this endpoints the web application can interact with the database to persist the information
+
 ## Deploying project locally
 
 ### Steps for running map web locally
