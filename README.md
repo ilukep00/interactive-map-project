@@ -18,6 +18,10 @@ The following tables have been created for persisting the geometries:
 
 All the tables include a geom column for indicating the type of geometry that will be stored on it
 
+### Geoserver
+Those tables have been published as layers in Geoserver. Also some styles have been published and associated
+to the layers in order to show it in a proper way in the web application
+
 ## Deploying project locally
 
 ### Steps for running map web locally
