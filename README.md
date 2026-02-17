@@ -59,11 +59,23 @@ It is necessary to have this tools installed
 * Geoserver:
     - [Installation Guide](https://docs.geoserver.org/main/en/user/installation/index.html)
     - Version used for this project: 2.27.2
+      
 ### Creating project structure
 There is a Jar file inside the geomInfra directory, which is in charge of genereting all the structure related to the database and geoserver for this project.
 * Jar file: geomInfra-jar-with-dependencies.jar
 * For execute it, the following command needs to be launched: ```java -jar geomInfra-jar-with-dependencies.jar```
 
 This script will create a new postgres database and geoserver workspace both called ol_project. Take this into account because if you have a database or workspace with the same name, the script will fail.
+
+### Installing dependencies
+#### Create a python environment
+
+The following commands need to be launched for creating a python environment and install all the required libraries in order to run the fastapi api webservice
+* python -m venv venv
+* venv\Scripts\activate
+* pip install -r requirements.txt
+
+Note: When running the venv\Scripts\activate command maybe some warning will appear indicating that you do not have permission for executing the script, with this command it will be solved: Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
 
 
