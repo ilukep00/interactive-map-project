@@ -68,7 +68,7 @@ There is a Jar file inside the geomInfra directory, which is in charge of genere
 This script will create a new postgres database and geoserver workspace both called ol_project. Take this into account because if you have a database or workspace with the same name, the script will fail.
 
 ### Installing dependencies
-#### Create a python environment
+#### Python dependencies
 
 The following commands need to be launched for creating a python environment and install all the required libraries in order to run the fastapi api webservice
 * python -m venv venv
@@ -76,6 +76,12 @@ The following commands need to be launched for creating a python environment and
 * pip install -r requirements.txt
 
 Note: When running the venv\Scripts\activate command maybe some warning will appear indicating that you do not have permission for executing the script, with this command it will be solved: Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
+#### Npm dependencies
+For installing the npm dependencies the following command is necessary
+* npm install
+
+
 
 
 
