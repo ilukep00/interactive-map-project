@@ -37,8 +37,7 @@ Using this endpoints the web application can interact with the database to persi
 
 ## Deploying project locally
 
-### Steps for running map web locally
-#### Prerequisites
+### Prerequisites
 
 It is necessary to have this tools installed
 * Java: 
@@ -81,6 +80,21 @@ Note: When running the venv\Scripts\activate command maybe some warning will app
 For installing the npm dependencies the following command is necessary
 * npm install
 
+### Running the app locally
+* First of all the geoserver service should be started, this can be done executing the Start Geoserver application:
+<img width="156" height="32" alt="image" src="https://github.com/user-attachments/assets/98b448f0-eb4d-44b3-b2de-d8b8b2223798" />
+
+* Then the fastapi webservice should be initialized too launching this commands inside the project directory:
+    - venv\Scripts\activate
+    - fastapi dev main.py
+      
+* From another terminal tab, the application web should be launched with the following command:
+    - npm start
+ 
+* If all goes well the application web will be available in the following url:
+    -  http://localhost:5173/
+
+<img width="1360" height="597" alt="image" src="https://github.com/user-attachments/assets/528c56dc-776c-41a5-884a-f257d6a79872" />
 
 
 
